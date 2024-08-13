@@ -1,0 +1,2 @@
+autopep8==2.3.1
+dolphin-memory-engine==1.2.0
