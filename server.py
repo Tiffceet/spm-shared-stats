@@ -1,8 +1,25 @@
 import asyncio
 import websockets
 import json
+from operator import itemgetter
+from datetime import datetime
+global_stats = {
+    "score": 0,
+    "coin": 0,
+    "atk": 1,
+    "lvl": 1,
+    "hp": 10,
+    "maxhp": 10
+}
 
-clients = set()
+
+def apply_changes(changes):
+    global_stats["score"] += changes["score"]
+    global_stats["coin"] += changes["coin"]
+    global_stats["atk"] += changes["atk"]
+    global_stats["lvl"] += changes["lvl"]
+    global_stats["hp"] += changes["hp"]
+    global_stats["maxhp"] += changes["maxhp"]
 
 
 async def send(websocket, message):
@@ -11,23 +28,38 @@ async def send(websocket, message):
     except websockets.ConnectionClosed:
         pass
 
-# create handler for each connection
-
 
 async def handler(websocket, path):
-    clients.add(websocket)
-    data = await websocket.recv()
+    '''
+    Create handler for each connection
+    '''
+    message = await websocket.recv()
+    data = json.loads(message)
+    action = data["action"]
+    client_uid = data["client_uid"]
+    ts = data["ts"]
 
-    print(f"Total Clients: {len(clients)}")
+    print(f"[{datetime.fromtimestamp(ts).strftime("%Y%m%d %H:%M:%S")}] <{client_uid}:{action}> {data}")
 
-    await websocket.send(json.dumps({
-        "score": 6969,
-        "coin": 999,
-        "atk": 69,
-        "lvl": 2,
-        "hp": 2,
-        "maxhp": 3
-    }))
+    if action == "get_stats":
+        # Force override player stats if client_uid = 1
+        if data["client_uid"] == 1:
+            global_stats["score"] = data["stats"]["score"]
+            global_stats["coin"] = data["stats"]["coin"]
+            global_stats["atk"] = data["stats"]["atk"]
+            global_stats["lvl"] = data["stats"]["lvl"]
+            global_stats["hp"] = data["stats"]["hp"]
+            global_stats["maxhp"] = data["stats"]["maxhp"]
+        await websocket.send(json.dumps(global_stats))
+        return
+
+    if action == "report_stats":
+        changes = data["changes"]
+        apply_changes(changes)
+        await websocket.send(json.dumps(global_stats))
+        return
+
+    await websocket.send(json.dumps(global_stats))
 
 start_server = websockets.serve(handler, "0.0.0.0", 8000)
 
