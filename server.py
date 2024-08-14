@@ -1,7 +1,6 @@
 import asyncio
 import websockets
 import json
-from operator import itemgetter
 from datetime import datetime
 import os
 
