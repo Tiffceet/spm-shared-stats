@@ -3,6 +3,8 @@ import websockets
 import json
 from operator import itemgetter
 from datetime import datetime
+import os
+
 global_stats = {
     "score": 0,
     "coin": 0,
@@ -62,7 +64,8 @@ async def handler(websocket, path):
 
     await websocket.send(json.dumps(global_stats))
 
-start_server = websockets.serve(handler, "0.0.0.0", 8000)
-
+port = 8000 if not hasattr(os.environ, 'PORT') else os.environ["PORT"]
+start_server = websockets.serve(handler, "0.0.0.0", port)
+print(f"Listening ws://0.0.0.0:{port}")
 asyncio.get_event_loop().run_until_complete(start_server)
 asyncio.get_event_loop().run_forever()
