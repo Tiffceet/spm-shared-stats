@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  spm-shared-stats:
+    image: ghcr.io/tiffceet/spm-shared-stats:main
+    ports:
+      - "8000:8000" # Change the port mapping as needed
+    restart: unless-stopped
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /root/.docker/config.json:/config.json
+    command: --interval 30
+    environment:
+      - REPO_USER=
+      - REPO_PASSWORD=
