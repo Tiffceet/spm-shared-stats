@@ -40,8 +40,9 @@ async def handler(websocket, path):
     client_uid = data["client_uid"]
     ts = data["ts"]
 
-    print(f"[{datetime.fromtimestamp(ts).strftime("%Y%m%d %H:%M:%S")}] <{
-          client_uid}:{action}> {data}")
+    current_time = datetime.fromtimestamp(ts).strftime("%Y%m%d %H:%M:%S")
+    print(f"[{current_time}] <{client_uid}:{action}> {data}")
+    print(global_stats)
 
     if action == "get_stats":
         # Force override player stats if client_uid = 1
@@ -60,6 +61,25 @@ async def handler(websocket, path):
         apply_changes(changes)
         await websocket.send(json.dumps(global_stats))
         return
+
+    if action == "reset":
+        global_stats["score"] = 0
+        global_stats["coin"] = 0
+        global_stats["atk"] = 1
+        global_stats["lvl"] = 1
+        global_stats["hp"] = 10
+        global_stats["maxhp"] = 1
+        return
+    
+    if action == "override":
+        print("hp" in data["stats"].keys())
+        keys = data["stats"].keys()
+        global_stats["score"] = global_stats["score"] if "score" not in keys else data["stats"]["score"]
+        global_stats["coin"] = global_stats["coin"] if "coin" not in keys else data["stats"]["coin"]
+        global_stats["atk"] = global_stats["atk"] if "atk" not in keys else data["stats"]["atk"]
+        global_stats["lvl"] = global_stats["lvl"] if "lvl" not in keys else data["stats"]["lvl"]
+        global_stats["hp"] = global_stats["hp"] if "hp" not in keys else data["stats"]["hp"]
+        global_stats["maxhp"] = global_stats["maxhp"] if "maxhp" not in keys else data["stats"]["maxhp"]
 
     await websocket.send(json.dumps(global_stats))
 
