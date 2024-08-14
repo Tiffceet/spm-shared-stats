@@ -3,3 +3,4 @@ dolphin-memory-engine==1.2.0
 websockets==12.0
 websocket-client==1.8.0
 rel==0.4.9.19
+pyinstaller==6.10.0

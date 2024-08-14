@@ -4,9 +4,9 @@ import asyncio
 import websockets
 import json
 import time
+import uuid
 ws_url = 'ws://localhost:8000'
-client_uid = 1
-
+client_uid = str(uuid.uuid4())
 
 def get_changes(old_stat, new_stat):
     changes = {
