@@ -17,17 +17,17 @@ async def send(websocket, message):
 async def handler(websocket, path):
     clients.add(websocket)
     data = await websocket.recv()
-    try:
-        obj = json.loads(data)
-        print(f"[{obj["client_uid"]}] {obj["stats"]}")
-        clients.remove(websocket)
-    except:
-        pass
 
     print(f"Total Clients: {len(clients)}")
 
-    for websocket in clients:
-        asyncio.create_task(send(websocket, data))
+    await websocket.send(json.dumps({
+        "score": 6969,
+        "coin": 999,
+        "atk": 69,
+        "lvl": 2,
+        "hp": 2,
+        "maxhp": 3
+    }))
 
 start_server = websockets.serve(handler, "0.0.0.0", 8000)
 
