@@ -70,7 +70,7 @@ async def handler(websocket, path):
         global_stats["hp"] = 10
         global_stats["maxhp"] = 10
         return
-    
+
     if action == "override":
         print("hp" in data["stats"].keys())
         keys = data["stats"].keys()
@@ -83,7 +83,7 @@ async def handler(websocket, path):
 
     await websocket.send(json.dumps(global_stats))
 
-port = 8000 if not hasattr(os.environ, 'PORT') else os.environ["PORT"]
+port = 8000 if "PORT" not in os.environ.keys() else os.environ["PORT"]
 start_server = websockets.serve(handler, "0.0.0.0", port)
 print(f"Listening ws://0.0.0.0:{port}")
 asyncio.get_event_loop().run_until_complete(start_server)

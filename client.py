@@ -5,8 +5,9 @@ import websockets
 import json
 import time
 import uuid
-ws_url = 'ws://spm.looz.online:8000'
-client_uid = str(uuid.uuid4())
+import os
+ws_url = 'ws://spm.looz.online:8000' if 'WS_URL' not in os.environ.keys() else os.environ["WS_URL"]
+client_uid = str(uuid.uuid4()) if 'CLIENT_UID' not in os.environ.keys() else os.environ["CLIENT_UID"]
 
 def get_changes(old_stat, new_stat):
     changes = {
