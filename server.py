@@ -68,7 +68,7 @@ async def handler(websocket, path):
         global_stats["atk"] = 1
         global_stats["lvl"] = 1
         global_stats["hp"] = 10
-        global_stats["maxhp"] = 1
+        global_stats["maxhp"] = 10
         return
     
     if action == "override":

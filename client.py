@@ -41,15 +41,21 @@ async def main():
     old_stats = get_stats()
     print("Status: Connected")
     print(f"Client UID: {client_uid}")
+    print(f"WS url: {ws_url}")
     while True:
-        async with websockets.connect(ws_url) as ws:
-            stats = get_stats()
-            changes = get_changes(old_stats, stats)
-            print(changes)
-            await ws.send(format_response({"action": "report_stats", "changes": changes}))
-            response = await ws.recv()
-            write_stats(json.loads(response))
-            old_stats = get_stats()
+        try:
+            async with websockets.connect(ws_url) as ws:
+                stats = get_stats()
+                changes = get_changes(old_stats, stats)
+                print(changes)
+                await ws.send(format_response({"action": "report_stats", "changes": changes}))
+                response = await ws.recv()
+                write_stats(json.loads(response))
+                old_stats = get_stats()
+        except Exception as error:
+            print("Unknown Error Occured")
+            print(error)
+
         time.sleep(1)
 
 
