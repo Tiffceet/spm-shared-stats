@@ -14,12 +14,12 @@ global_stats = {
 
 
 def apply_changes(changes):
-    global_stats["score"] += changes["score"]
-    global_stats["coin"] += changes["coin"]
-    global_stats["atk"] += changes["atk"]
-    global_stats["lvl"] += changes["lvl"]
-    global_stats["hp"] += changes["hp"]
-    global_stats["maxhp"] += changes["maxhp"]
+    global_stats["score"] = max(global_stats["score"] + changes["score"], 0)
+    global_stats["coin"] = max(global_stats["coin"] + changes["coin"], 0)
+    global_stats["atk"] = max(global_stats["atk"] + changes["atk"], 0)
+    global_stats["lvl"] = max(global_stats["lvl"] + changes["lvl"], 0)
+    global_stats["hp"] = max(global_stats["hp"] + changes["hp"], 0)
+    global_stats["maxhp"] = max(global_stats["maxhp"] + changes["maxhp"], 0)
 
 
 async def send(websocket, message):
@@ -39,7 +39,8 @@ async def handler(websocket, path):
     client_uid = data["client_uid"]
     ts = data["ts"]
 
-    print(f"[{datetime.fromtimestamp(ts).strftime("%Y%m%d %H:%M:%S")}] <{client_uid}:{action}> {data}")
+    print(f"[{datetime.fromtimestamp(ts).strftime("%Y%m%d %H:%M:%S")}] <{
+          client_uid}:{action}> {data}")
 
     if action == "get_stats":
         # Force override player stats if client_uid = 1
